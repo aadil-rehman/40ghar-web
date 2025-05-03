@@ -46,3 +46,8 @@
 - NGO profile section
 - Public impact stats page ("58 people helped near you")
 - QR code for needy users to easily register via posters or handouts
+
+## Demo figma file
+
+https://www.figma.com/design/6gamot0M3nm7ZvaekqJBqs/Property-listing-website-concept--Community-?node-id=1-39&t=X70c9JjdunztmaHR-0
+https://www.figma.com/design/47BukgFsTXkFRIsOHboHnI/Donations-app--Community-?node-id=4-0&t=10pvGafq8FhzxBXl-0
