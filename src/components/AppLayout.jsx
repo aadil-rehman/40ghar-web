@@ -5,9 +5,11 @@ import Footer from "./Footer";
 
 const AppLayout = () => {
 	return (
-		<div>
+		<div className="min-h-screen flex flex-col">
 			<Header />
-			<Outlet />
+			<main className="flex-1 mt-8">
+				<Outlet />
+			</main>
 			<Footer />
 		</div>
 	);

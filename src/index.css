@@ -1,2 +1,11 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, wireframe, cupcake, pastel;
+}
+
+
+
+.leaflet-control-zoom {
+    z-index: 200 !important; /* default is usually 1000, so this makes it lower */
+  }
