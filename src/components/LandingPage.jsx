@@ -47,7 +47,7 @@ const LandingPage = () => {
 				</div>
 
 				<p className="mt-10 text-sm text-gray-400">
-					An initiative inspired by Teaching of Prophet Muhammad (PBUH)
+					An initiative inspired by the Teaching of Prophet Muhammad (PBUH)
 				</p>
 			</div>
 		</div>

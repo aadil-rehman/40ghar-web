@@ -4,8 +4,18 @@
   themes: light --default, dark --prefersdark, wireframe, cupcake, pastel;
 }
 
-
-
-.leaflet-control-zoom {
-    z-index: 200 !important; /* default is usually 1000, so this makes it lower */
+@plugin "daisyui/theme" {
+    name: "pastel";
+    default: true;
+  
+    --color-primary: #FFE5B4;      /* Pastel Peach */
+    --color-secondary: #FADADD;    /* Pastel Rose */
+    --color-accent: #E6E6FA;       /* Pastel Lavender */
+    --color-neutral: #2E2E2E;      /* Dark neutral for text */
+    --color-base-100: #ffffff;     /* Base background */
+    --color-info: #a7c7e7;         /* Soft Blue */
+    --color-success: #D5F3E5;      /* Pastel Mint */
+    --color-warning: #FFFACD;      /* Lemon Chiffon */
+    --color-error: #F6A5A5;        /* Soft Red */
   }
+
