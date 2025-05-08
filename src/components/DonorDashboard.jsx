@@ -4,6 +4,8 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useLocation } from "react-router-dom";
 import { calculateDistance, getTime } from "../utils/commonFunctions";
+import NeedTypeHeading from "./NeedTypeHeading";
+import StatusBadge from "./StatusBadge";
 
 const DonorDashboard = () => {
 	const [requests, setRequests] = useState([]);
@@ -43,7 +45,7 @@ const DonorDashboard = () => {
 		<div className="p-6 mt-16 w-full max-w-screen-xl mx-auto">
 			<div className="flex gap-52">
 				<span>
-					<h1 className="text-3xl font-bold mb-6">Welcome, Donor 👋</h1>
+					<h1 className="text-2xl font-bold mb-6">Hey, Aadil. You are Hero!</h1>
 				</span>
 				<span>
 					<h2 className="text-center text-2xl font-bold">
@@ -78,18 +80,10 @@ const DonorDashboard = () => {
 const RequestCard = ({ request, donorLocation }) => {
 	console.log(request?.address);
 
-	const getBadgeColor = (type) => {
-		switch (type?.toLowerCase()) {
-			case "ration":
-				return "bg-green-200 text-green-800";
-			case "clothes":
-				return "bg-blue-200 text-blue-800";
-			case "medicine":
-				return "bg-red-200 text-red-800";
-			default:
-				return "bg-gray-200 text-gray-800";
-		}
-	};
+	const isHelped =
+		request?.status === "in_progress" ||
+		request?.status === "fulfilled" ||
+		request?.status === "flagged";
 
 	return (
 		<div className="bg-base-200 p-4 rounded-lg shadow-sm">
@@ -98,15 +92,9 @@ const RequestCard = ({ request, donorLocation }) => {
 					Family in{" "}
 					{request?.address?.split(",")[0] || request?.address?.split(",")[1]}
 				</h3>
-				{/* Badge */}
-				<span
-					className={`text-xs font-semibold px-2 py-1 rounded-full ${getBadgeColor(
-						request?.needType
-					)}`}
-				>
-					{request?.needType || "Other"}
-				</span>
+				<StatusBadge status={request?.status} />
 			</div>
+			<NeedTypeHeading needType={request?.needType} size="xs" />
 			<p className="text-sm text-gray-600 dark:text-gray-300">
 				{request?.description}
 			</p>
@@ -120,7 +108,13 @@ const RequestCard = ({ request, donorLocation }) => {
 				<span className="text-xs text-gray-400">
 					Requested {getTime(request?.createdAt)} ago
 				</span>
-				<button className="btn btn-sm btn-primary">View Details</button>
+				{!isHelped ? (
+					<button className="bg-gradient-to-r  from-blue-500 to-purple-600 text-sm text-white font-semibold py-1.5 px-4 rounded-full shadow-lg hover:scale-105 hover:from-blue-600 hover:to-purple-700 transition-all duration-300">
+						I will help
+					</button>
+				) : (
+					<p>Name</p>
+				)}
 			</div>
 		</div>
 	);

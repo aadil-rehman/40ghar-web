@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import StatusBadge from "./StatusBadge";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
+import NeedTypeHeading from "./NeedTypeHeading";
 
 const MyRequests = () => {
 	const [requests, setRequests] = useState([]);
@@ -35,23 +36,7 @@ const MyRequests = () => {
 						className="bg-white shadow-lg rounded-2xl p-6 border hover:shadow-2xl transition duration-300"
 					>
 						<div className="flex items-center justify-between mb-2">
-							<span
-								className={`text-xs px-3 py-1 rounded-full font-semibold flex items-center gap-1 ${
-									request.needType === "ration"
-										? "bg-green-100 text-green-700 border border-green-300"
-										: request.needType === "cloths"
-										? "bg-blue-100 text-blue-700 border border-blue-300"
-										: request.needType === "medicine"
-										? "bg-red-100 text-red-700 border border-red-300"
-										: "bg-gray-200 text-gray-700 border border-gray-300"
-								}`}
-							>
-								{request.needType === "ration" && "🍚 Ration"}
-								{request.needType === "cloths" && "👕 Cloths"}
-								{request.needType === "medicine" && "💊 Medicine"}
-								{!["ration", "cloths", "medicine"].includes(request.needType) &&
-									"📦 Other"}
-							</span>
+							<NeedTypeHeading needType={request.needType} size="lg" />
 							<StatusBadge status={request.status} />
 						</div>
 
