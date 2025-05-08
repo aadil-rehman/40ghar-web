@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	FaHandHoldingHeart,
 	FaMapMarkerAlt,
 	FaCheckCircle,
 } from "react-icons/fa";
 import helpImage from "../assets/people-together.jpg.svg";
+import DialogBox from "./DialogBox";
 
 const NeedyDashboard = () => {
 	return (
@@ -36,9 +37,7 @@ const NeedyDashboard = () => {
 							Let nearby donors know what you need. fill out the form for quick,
 							compassionate support.
 						</p>
-						<button className="btn btn-primary w-full md:w-48">
-							Raise Request
-						</button>
+						<DialogBox />
 					</div>
 				</div>
 

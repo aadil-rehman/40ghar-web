@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
 	return (
@@ -27,10 +28,10 @@ const Header = () => {
 						className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
 					>
 						<li>
-							<a>Homepage</a>
+							<Link to="/needy">Home</Link>
 						</li>
 						<li>
-							<a>Portfolio</a>
+							<Link to="/myRequests">View All Requests</Link>
 						</li>
 						<li>
 							<a>About</a>

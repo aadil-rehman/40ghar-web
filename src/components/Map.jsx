@@ -20,40 +20,7 @@ const customIcon = new L.Icon({
 	popupAnchor: [0, -32],
 });
 
-const Map = () => {
-	const [requests, setRequests] = useState([]);
-	// Get the current location object
-	const location = useLocation();
-
-	// Create a URLSearchParams instance from the query string
-	const queryParams = new URLSearchParams(location.search);
-
-	const lat = queryParams.get("lat");
-	const lng = queryParams.get("lng");
-
-	const latitude = parseFloat(lat);
-	const longitude = parseFloat(lng);
-
-	if (isNaN(latitude) || isNaN(longitude)) {
-		throw new Error("Invalid latitude or longitude values");
-	}
-	const fetchRequests = async () => {
-		try {
-			const res = await axios.get(
-				BASE_URL + `/request/all?lat=${lat}&lng=${lng}`,
-				{
-					withCredentials: true,
-				}
-			);
-			console.log(res);
-			setRequests(res?.data?.data);
-		} catch (err) {
-			console.error(err);
-		}
-	};
-	useEffect(() => {
-		fetchRequests();
-	}, []);
+const Map = ({ requests }) => {
 	return (
 		<div className="w-full h-[80vh]">
 			<MapContainer
