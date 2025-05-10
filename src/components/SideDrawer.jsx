@@ -1,5 +1,9 @@
 import { LocateFixedIcon } from "lucide-react";
 import { useState } from "react";
+import { getAddress } from "../utils/commonFunctions";
+import axios from "axios";
+import { BASE_URL } from "../utils/constants";
+import MiniLoader from "./MiniLoader";
 
 const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 	const drawerId = `drawer-${userRole}`;
@@ -9,17 +13,49 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 		password: "",
 		phone: "",
 		address: "",
-		location: "", // for simplicity, let’s keep it as string
 	});
+
+	const [position, setPosition] = useState({});
+	const [addressLoading, setAddressLoading] = useState(false);
+	const [error, setError] = useState("");
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const handleSubmit = (e) => {
+	const handleSubmit = async (e) => {
 		e.preventDefault();
-		// TODO: Send data to backend
-		console.log({ ...formData, role: userRole });
+
+		try {
+			const payload = {
+				...formData,
+				role: userRole,
+				location: {
+					type: "Point",
+					coordinates: [position.longitude, position.latitude], // [longitude, latitude]
+				},
+			};
+			console.log(payload);
+			const res = await axios.post(BASE_URL + "/signup", payload, {
+				withCredentials: true,
+			});
+
+			if (res?.data?.status === 1) {
+				setFormData({
+					name: "",
+					emailId: "",
+					password: "",
+					phone: "",
+					address: "",
+				});
+				setPosition({});
+				document.getElementById("my_modal_3").close();
+			}
+			setError("");
+		} catch (err) {
+			console.error("error", err);
+			setError(err?.response?.data?.error);
+		}
 	};
 
 	const getPosition = () => {
@@ -29,15 +65,23 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 	};
 
 	const handleGetPositionClick = async () => {
+		setAddressLoading(true);
 		try {
 			const positionObj = await getPosition();
 			const position = {
 				latitude: positionObj.coords.latitude,
 				longitude: positionObj.coords.longitude,
 			};
-			console.log(position);
+			setPosition(position);
+			const addressObj = await getAddress(position);
+			const address = `${addressObj?.locality}, ${addressObj?.city}, ${addressObj?.countryName}`;
+			setFormData({ ...formData, address: address });
+			console.log(address);
+			setAddressLoading(false);
 		} catch (err) {
-			console.log(err);
+			console.error("Geolocation failed:", err);
+			setAddressLoading(false);
+			alert(err.message);
 		}
 	};
 
@@ -108,19 +152,26 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 								className={`flex gap-1 items-center text-white w-fit px-2 py-1.5 rounded-lg hover:cursor-pointer`}
 								onClick={handleGetPositionClick}
 							>
-								<span className="mb-0.5">Get </span>
-								<span>
-									<LocateFixedIcon className="h-4 w-4" />
-								</span>
+								{addressLoading ? (
+									<MiniLoader />
+								) : (
+									<>
+										<span className="mb-0.5">Get </span>
+										<span>
+											<LocateFixedIcon className="h-4 w-4" />
+										</span>
+									</>
+								)}
 							</span>
 							<input
 								type="text"
-								name="location"
-								placeholder="Location"
-								value={formData.location}
+								name="address"
+								placeholder="Address"
+								value={formData.address}
 								onChange={handleChange}
 								required
-								className="input input-bordered w-full focus:outline-none rounded-lg pl-16"
+								readOnly
+								className="input input-bordered w-full hover:cursor-not-allowed focus:outline-none rounded-lg"
 							/>
 						</div>
 
@@ -132,6 +183,7 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 							Register
 						</button>
 					</form>
+					{error && <p className="text-red-600 text-sm">{error}</p>}
 				</div>
 			</div>
 		</div>

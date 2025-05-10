@@ -75,6 +75,7 @@ const DialogBox = () => {
 					widow: false,
 					address: "",
 				});
+				setPosition({});
 				document.getElementById("my_modal_3").close();
 			}
 			setError("");
@@ -120,7 +121,7 @@ const DialogBox = () => {
 									setFormData({ ...formData, needType: e.target.value })
 								}
 								className="select select-bordered w-full rounded-md focus:outline-none"
-								// required
+								required
 							>
 								<option value="ration">Ration</option>
 								<option value="medicine">Medicine</option>
@@ -142,7 +143,7 @@ const DialogBox = () => {
 									})
 								}
 								className="input input-bordered w-full rounded-md focus:outline-none"
-								// required
+								required
 							/>
 						</label>
 
@@ -155,7 +156,7 @@ const DialogBox = () => {
 									setFormData({ ...formData, description: e.target.value })
 								}
 								className="textarea textarea-bordered w-full rounded-md focus:outline-none"
-								// required
+								required
 							/>
 						</label>
 
@@ -189,6 +190,7 @@ const DialogBox = () => {
 								name="address"
 								value={formData.address}
 								readOnly
+								required
 								className="input flex-1 rounded-md hover:cursor-not-allowed focus:ring-0 focus:outline-none focus:shadow-none"
 							/>
 						</div>
