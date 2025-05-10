@@ -37,7 +37,7 @@ const StatusBadge = ({ status }) => {
 
 	return (
 		<span
-			className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium 
+			className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium 
 				${style.bg} ${style.textColor} ring-1 ${style.ring}`}
 		>
 			<Icon size={14} className="shrink-0 text-xs" />

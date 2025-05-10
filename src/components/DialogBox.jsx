@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { getAddress } from "../utils/commonFunctions";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
+import { LocateFixedIcon } from "lucide-react";
 
 const DialogBox = () => {
 	const [formData, setFormData] = useState({
@@ -174,19 +175,21 @@ const DialogBox = () => {
 						</label>
 
 						<div className="flex gap-2">
-							<button
-								type="button"
+							<span
+								className="flex gap-1 items-center bg-blue-500 text-white w-fit px-2 py-1.5 rounded-lg hover:bg-blue-400 hover:cursor-pointer"
 								onClick={fetchAddress}
-								className="text-sm btn btn-secondary"
 							>
-								{addressLoading ? "Loading..." : "Get Position"}
-							</button>
+								<span className="mb-0.5">Get </span>
+								<span>
+									<LocateFixedIcon className="h-5 w-5" />
+								</span>
+							</span>
 							<input
 								type="text"
 								name="address"
 								value={formData.address}
 								readOnly
-								className="input rounded-md hover:cursor-not-allowed focus:ring-0 focus:outline-none focus:shadow-none"
+								className="input flex-1 rounded-md hover:cursor-not-allowed focus:ring-0 focus:outline-none focus:shadow-none"
 							/>
 						</div>
 

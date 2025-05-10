@@ -6,6 +6,9 @@ import { useLocation } from "react-router-dom";
 import { calculateDistance, getTime } from "../utils/commonFunctions";
 import NeedTypeHeading from "./NeedTypeHeading";
 import StatusBadge from "./StatusBadge";
+import { UserIcon } from "@heroicons/react/24/outline";
+import Loader from "./Loader";
+import HelpConfirmationDialog from "./HelpConfirmationDialog";
 
 const DonorDashboard = () => {
 	const [requests, setRequests] = useState([]);
@@ -56,16 +59,20 @@ const DonorDashboard = () => {
 
 			<div className="grid grid-cols-3 gap-6">
 				<div className="bg-white rounded-xl shadow-lg p-4 col-span-1 overflow-y-auto max-h-[70vh]">
-					<h2 className="text-xl font-bold mb-4">Nearby Ration Requests</h2>
+					<h2 className="text-xl font-bold mb-4">Nearby Needy Requests</h2>
 
 					<div className="space-y-4">
-						{requests.map((request) => (
-							<RequestCard
-								request={request}
-								key={request._id}
-								donorLocation={[longitude, latitude]}
-							/>
-						))}
+						{requests.length === 0 ? (
+							<Loader />
+						) : (
+							requests.map((request) => (
+								<RequestCard
+									request={request}
+									key={request._id}
+									donorLocation={[longitude, latitude]}
+								/>
+							))
+						)}
 					</div>
 				</div>
 				{/* Map */}
@@ -88,32 +95,41 @@ const RequestCard = ({ request, donorLocation }) => {
 	return (
 		<div className="bg-base-200 p-4 rounded-lg shadow-sm">
 			<div className="flex justify-between items-center">
-				<h3 className="font-bold text-lg">
-					Family in{" "}
-					{request?.address?.split(",")[0] || request?.address?.split(",")[1]}
-				</h3>
+				<span className="flex gap-1 items-center">
+					<h3 className="font-bold text-lg">
+						Family in{" "}
+						{request?.address?.split(",")[0] || request?.address?.split(",")[1]}
+					</h3>
+					<p className="text-[13px] font-semibold text-gray-500 mt-1">
+						(~
+						{calculateDistance(
+							donorLocation,
+							request?.location?.coordinates
+						)}{" "}
+						meters)
+					</p>
+				</span>
 				<StatusBadge status={request?.status} />
 			</div>
 			<NeedTypeHeading needType={request?.needType} size="xs" />
 			<p className="text-sm text-gray-600 dark:text-gray-300">
 				{request?.description}
 			</p>
-			<p className="text-sm text-gray-500 mt-1">
-				Distance: ~
-				{calculateDistance(donorLocation, request?.location?.coordinates)}{" "}
-				meters
-			</p>
 
-			<div className="mt-3 flex justify-between items-center">
+			<div className="flex justify-between items-center">
 				<span className="text-xs text-gray-400">
 					Requested {getTime(request?.createdAt)} ago
 				</span>
 				{!isHelped ? (
-					<button className="bg-gradient-to-r  from-blue-500 to-purple-600 text-sm text-white font-semibold py-1.5 px-4 rounded-full shadow-lg hover:scale-105 hover:from-blue-600 hover:to-purple-700 transition-all duration-300">
-						I will help
-					</button>
+					<HelpConfirmationDialog
+						request={request}
+						donorLocation={donorLocation}
+					/>
 				) : (
-					<p>Name</p>
+					<span className="flex gap-1 justify-center items-center border border-purple-600 text-purple-600 rounded-xl px-2 py-0.5">
+						<UserIcon className="w-4 h-4" />
+						<p className="text-sm ">{request?.donorUserId?.name}</p>
+					</span>
 				)}
 			</div>
 		</div>
