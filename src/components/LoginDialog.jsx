@@ -10,6 +10,7 @@ const LoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 
 	const [emailId, setEmailId] = useState("");
 	const [password, setPassword] = useState("");
+	const [error, setError] = useState("");
 	const navigate = useNavigate();
 	// const { user } = useSelector((store) => store.user);
 	const dispatch = useDispatch();
@@ -29,8 +30,10 @@ const LoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 				navigate("/request/all?lat=28.750689&lng=77.283913");
 				window.location.reload();
 			}
+			setError("");
 		} catch (err) {
 			console.error("ERROR: " + err);
+			setError(err?.response?.data?.error);
 		}
 	};
 	return (
@@ -75,6 +78,7 @@ const LoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 							</button>
 						</div>
 					</div>
+					{error && <p className="text-red-600">{error}</p>}
 				</div>
 				<form method="dialog" className="modal-backdrop">
 					<button>close</button>

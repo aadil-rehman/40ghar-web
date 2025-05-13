@@ -19,3 +19,9 @@
     --color-error: #F6A5A5;        /* Soft Red */
   }
 
+
+
+  /* In global.css or tailwind.config.css */
+.step-custom-error::before {
+  background-color: #fca5a5 !important; /* red-500 */
+}

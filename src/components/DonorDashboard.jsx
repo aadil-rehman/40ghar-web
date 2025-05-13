@@ -9,9 +9,12 @@ import StatusBadge from "./StatusBadge";
 import { UserIcon } from "@heroicons/react/24/outline";
 import Loader from "./Loader";
 import HelpConfirmationDialog from "./HelpConfirmationDialog";
+import { useSelector } from "react-redux";
 
 const DonorDashboard = () => {
 	const [requests, setRequests] = useState([]);
+	const user = useSelector((store) => store.user);
+	const [refreshRequests, setRefreshRequests] = useState(false);
 
 	// Get the current location object
 	const location = useLocation();
@@ -37,13 +40,14 @@ const DonorDashboard = () => {
 			);
 			console.log(res);
 			setRequests(res?.data?.data);
+			setRefreshRequests(false);
 		} catch (err) {
 			console.error(err);
 		}
 	};
 	useEffect(() => {
 		fetchRequests();
-	}, []);
+	}, [refreshRequests]);
 	return (
 		<div className="p-6 mt-16 w-full max-w-screen-xl mx-auto">
 			<div className="flex gap-52">
@@ -70,6 +74,8 @@ const DonorDashboard = () => {
 									request={request}
 									key={request._id}
 									donorLocation={[longitude, latitude]}
+									user={user}
+									setRefreshRequests={setRefreshRequests}
 								/>
 							))
 						)}
@@ -84,7 +90,7 @@ const DonorDashboard = () => {
 	);
 };
 
-const RequestCard = ({ request, donorLocation }) => {
+const RequestCard = ({ request, donorLocation, user, setRefreshRequests }) => {
 	console.log(request?.address);
 
 	const isHelped =
@@ -112,7 +118,7 @@ const RequestCard = ({ request, donorLocation }) => {
 				<StatusBadge status={request?.status} />
 			</div>
 			<NeedTypeHeading needType={request?.needType} size="xs" />
-			<p className="text-sm text-gray-600 dark:text-gray-300">
+			<p className="text-xs text-gray-600 dark:text-gray-500">
 				{request?.description}
 			</p>
 
@@ -120,10 +126,12 @@ const RequestCard = ({ request, donorLocation }) => {
 				<span className="text-xs text-gray-400">
 					Requested {getTime(request?.createdAt)} ago
 				</span>
-				{!isHelped ? (
+				{!isHelped || request?.donorUserId?._id === user._id ? (
 					<HelpConfirmationDialog
 						request={request}
 						donorLocation={donorLocation}
+						donorUserId={user?._id}
+						setRefreshRequests={setRefreshRequests}
 					/>
 				) : (
 					<span className="flex gap-1 justify-center items-center border border-purple-600 text-purple-600 rounded-xl px-2 py-0.5">
