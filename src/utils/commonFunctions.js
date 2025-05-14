@@ -8,6 +8,10 @@ export async function getAddress({ latitude, longitude }) {
 	return data;
 }
 
+export function shortenString(str, maxLength) {
+	return str.length > maxLength ? str.slice(0, maxLength) + "..." : str;
+}
+
 export function getTime(timestamp) {
 	const eventCreatedDate = new Date(timestamp);
 	const currDate = new Date();

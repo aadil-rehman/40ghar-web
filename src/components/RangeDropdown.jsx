@@ -4,8 +4,7 @@ import { RiMapPinRangeLine } from "react-icons/ri";
 
 const ranges = [1, 2, 5, 10];
 
-const RangeDropdown = () => {
-	const [range, setRange] = useState(1);
+const RangeDropdown = ({ range, setRange }) => {
 	const [open, setOpen] = useState(false);
 	const dropdownRef = useRef();
 

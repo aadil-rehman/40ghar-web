@@ -12,14 +12,17 @@ import HelpConfirmationDialog from "./HelpConfirmationDialog";
 import { useSelector } from "react-redux";
 import LocationModeToggle from "./LocationModeToggle";
 
-import { RiMapPinRangeLine } from "react-icons/ri";
 import RangeDropdown from "./RangeDropdown";
+import MapLoader from "./MapLoader";
 
 const DonorDashboard = () => {
 	const [requests, setRequests] = useState([]);
 	const user = useSelector((store) => store.user);
 	const [refreshRequests, setRefreshRequests] = useState(false);
 	const [locationMode, setLocationMode] = useState("my");
+	const [userPosition, setUserPosition] = useState([28.752271, 77.287743]);
+	const [mapLoading, setMapLoading] = useState(false);
+	const [range, setRange] = useState(1);
 
 	// Get the current location object
 	const location = useLocation();
@@ -31,14 +34,19 @@ const DonorDashboard = () => {
 	const latitude = parseFloat(lat);
 	const longitude = parseFloat(lng);
 
+	const centerPosition = [latitude, longitude];
+	console.log(user?.location?.coordinates, centerPosition);
+
 	if (isNaN(latitude) || isNaN(longitude)) {
 		throw new Error("Invalid latitude or longitude values");
 	}
 
 	const fetchRequests = async () => {
+		const requestsRange = range * 1000;
+		setMapLoading(true);
 		try {
 			const res = await axios.get(
-				BASE_URL + `/request/all?lat=${lat}&lng=${lng}`,
+				BASE_URL + `/request/all?lat=${lat}&lng=${lng}&range=${requestsRange}`,
 				{
 					withCredentials: true,
 				}
@@ -46,13 +54,15 @@ const DonorDashboard = () => {
 			console.log(res);
 			setRequests(res?.data?.data);
 			setRefreshRequests(false);
+			setMapLoading(false);
 		} catch (err) {
 			console.error(err);
+			setMapLoading(true);
 		}
 	};
 	useEffect(() => {
 		fetchRequests();
-	}, [refreshRequests]);
+	}, [refreshRequests, range]);
 	return (
 		<div className="p-6 mt-16 w-full max-w-screen-xl mx-auto">
 			<div className="grid grid-cols-3 gap-2">
@@ -64,10 +74,11 @@ const DonorDashboard = () => {
 						People Around You Need Support — Step In
 					</h2>
 					<div className="flex justify-between mt-3">
-						<RangeDropdown />
+						<RangeDropdown range={range} setRange={setRange} />
 						<LocationModeToggle
 							locationMode={locationMode}
 							setLocationMode={setLocationMode}
+							setUserPosition={setUserPosition}
 						/>
 					</div>
 				</div>
@@ -94,8 +105,13 @@ const DonorDashboard = () => {
 					</div>
 				</div>
 				{/* Map */}
-				<div className="col-span-2 rounded-xl overflow-hidden shadow-lg max-h-[70vh]">
-					<Map requests={requests} />
+				<div className="col-span-2 rounded-xl overflow-hidden shadow-lg max-h-[70vh] relative">
+					{mapLoading && <MapLoader />}
+					<Map
+						requests={requests}
+						userPosition={userPosition}
+						centerPosition={centerPosition}
+					/>
 				</div>
 			</div>
 		</div>

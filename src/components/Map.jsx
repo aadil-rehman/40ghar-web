@@ -1,15 +1,13 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import L from "leaflet";
+import { useEffect } from "react";
 import {
 	MapContainer,
 	Marker,
 	Popup,
 	TileLayer,
+	useMap,
 	ZoomControl,
 } from "react-leaflet";
-import { BASE_URL } from "../utils/constants";
-import { useLocation } from "react-router-dom";
-import L from "leaflet";
 
 import customMarker from "../assets/pin-map.png";
 
@@ -20,21 +18,35 @@ const customIcon = new L.Icon({
 	popupAnchor: [0, -32],
 });
 
-const Map = ({ requests }) => {
+const redIcon = new L.Icon({
+	iconUrl:
+		"https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+	shadowUrl:
+		"https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+	iconSize: [30, 50],
+	iconAnchor: [15, 50],
+	popupAnchor: [0, -50],
+});
+
+const Map = ({ requests, userPosition, centerPosition }) => {
 	return (
 		<div className="w-full h-[80vh]">
 			<MapContainer
-				center={[28.752271, 77.287743]}
+				center={centerPosition}
 				zoom={14}
 				scrollWheelZoom={false}
 				style={{ height: "70vh", width: "100%" }}
 				zoomControl={false}
 			>
+				<MapUpdater userPosition={userPosition} />
 				<TileLayer
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 				/>
 				<ZoomControl position="topright" />
+				<Marker position={userPosition} icon={redIcon}>
+					<Popup>User Location</Popup>
+				</Marker>
 				{requests.map((request) => (
 					<LocationMarker request={request} key={request._id} />
 				))}
@@ -55,6 +67,18 @@ const LocationMarker = ({ request }) => {
 			<Popup>{request?.description}</Popup>
 		</Marker>
 	);
+};
+
+const MapUpdater = ({ userPosition }) => {
+	const map = useMap();
+
+	useEffect(() => {
+		if (userPosition) {
+			map.setView(userPosition, 14);
+		}
+	}, [userPosition, map]);
+
+	return null;
 };
 
 export default Map;
