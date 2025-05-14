@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Map from "./Map";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
@@ -10,11 +10,16 @@ import { UserIcon } from "@heroicons/react/24/outline";
 import Loader from "./Loader";
 import HelpConfirmationDialog from "./HelpConfirmationDialog";
 import { useSelector } from "react-redux";
+import LocationModeToggle from "./LocationModeToggle";
+
+import { RiMapPinRangeLine } from "react-icons/ri";
+import RangeDropdown from "./RangeDropdown";
 
 const DonorDashboard = () => {
 	const [requests, setRequests] = useState([]);
 	const user = useSelector((store) => store.user);
 	const [refreshRequests, setRefreshRequests] = useState(false);
+	const [locationMode, setLocationMode] = useState("my");
 
 	// Get the current location object
 	const location = useLocation();
@@ -50,15 +55,22 @@ const DonorDashboard = () => {
 	}, [refreshRequests]);
 	return (
 		<div className="p-6 mt-16 w-full max-w-screen-xl mx-auto">
-			<div className="flex gap-52">
-				<span>
+			<div className="grid grid-cols-3 gap-2">
+				<div className="col-span-1">
 					<h1 className="text-2xl font-bold mb-6">Hey, Aadil. You are Hero!</h1>
-				</span>
-				<span>
+				</div>
+				<div className="col-span-2">
 					<h2 className="text-center text-2xl font-bold">
 						People Around You Need Support — Step In
 					</h2>
-				</span>
+					<div className="flex justify-between mt-3">
+						<RangeDropdown />
+						<LocationModeToggle
+							locationMode={locationMode}
+							setLocationMode={setLocationMode}
+						/>
+					</div>
+				</div>
 			</div>
 
 			<div className="grid grid-cols-3 gap-6">
