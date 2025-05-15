@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { BASE_URL } from "../utils/constants";
 import axios from "axios";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { BASE_URL } from "../utils/constants";
 import { addUser } from "../utils/userSlice";
 
 const LoginDialog = ({ label, darkColor, lightColor, userRole }) => {
@@ -27,7 +27,7 @@ const LoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 			);
 			if (res?.data?.status === 1) {
 				dispatch(addUser(res?.data?.data));
-				navigate("/request/all?lat=28.750689&lng=77.283913");
+				navigate("/donor/requests");
 				window.location.reload();
 			}
 			setError("");

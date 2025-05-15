@@ -1,7 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { toggleTheme } from "../utils/themeSlice";
 
 const Header = () => {
+	const theme = useSelector((store) => store.theme);
+
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		document.documentElement.setAttribute("data-theme", theme);
+	}, [theme]);
+
 	return (
 		<div className="navbar bg-base-200 shadow-sm fixed top-0 z-[9999]">
 			<div className="navbar-start">
@@ -59,6 +69,12 @@ const Header = () => {
 							d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
 						/>{" "}
 					</svg>
+				</button>
+				<button
+					onClick={() => dispatch(toggleTheme())}
+					className="text-2xl mb-1 hover:cursor-pointer"
+				>
+					{theme === "pastel" ? "🌙" : "☀️"}
 				</button>
 				<button className="btn btn-ghost btn-circle">
 					<div className="indicator">

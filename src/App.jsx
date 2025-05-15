@@ -16,7 +16,7 @@ function App() {
 					<Route path="/" element={<AppLayout />}>
 						<Route path="/" element={<LandingPage />} />
 						<Route path="/needy" element={<NeedyDashboard />} />
-						<Route path="/request/all" element={<DonorDashboard />} />
+						<Route path="/donor/requests" element={<DonorDashboard />} />
 						<Route path="/myRequests" element={<MyRequests />} />
 					</Route>
 				</Routes>

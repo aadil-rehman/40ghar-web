@@ -1,6 +1,8 @@
 import L from "leaflet";
 import { useEffect } from "react";
 import {
+	Circle,
+	LayerGroup,
 	MapContainer,
 	Marker,
 	Popup,
@@ -28,12 +30,19 @@ const redIcon = new L.Icon({
 	popupAnchor: [0, -50],
 });
 
-const Map = ({ requests, userPosition, centerPosition }) => {
+const fillPurpleOptions = {
+	fillColor: "#dab6fc", // Light purple fill
+	color: "#9f6ef0", // Light purple border
+	fillOpacity: 0.3, // Soft transparency
+	weight: 2, // Border thickness
+};
+
+const Map = ({ requests, userPosition, centerPosition, range }) => {
 	return (
 		<div className="w-full h-[80vh]">
 			<MapContainer
 				center={centerPosition}
-				zoom={14}
+				zoom={15}
 				scrollWheelZoom={false}
 				style={{ height: "70vh", width: "100%" }}
 				zoomControl={false}
@@ -43,6 +52,13 @@ const Map = ({ requests, userPosition, centerPosition }) => {
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 					url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 				/>
+				<LayerGroup>
+					<Circle
+						center={userPosition}
+						pathOptions={fillPurpleOptions}
+						radius={range * 1000}
+					/>
+				</LayerGroup>
 				<ZoomControl position="topright" />
 				<Marker position={userPosition} icon={redIcon}>
 					<Popup>User Location</Popup>
@@ -74,7 +90,7 @@ const MapUpdater = ({ userPosition }) => {
 
 	useEffect(() => {
 		if (userPosition) {
-			map.setView(userPosition, 14);
+			map.setView(userPosition, 15);
 		}
 	}, [userPosition, map]);
 

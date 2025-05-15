@@ -26,7 +26,7 @@ const RangeDropdown = ({ range, setRange }) => {
 		>
 			<button
 				onClick={() => setOpen((prev) => !prev)}
-				className="flex items-center gap-2 px-2 py-1 text-sm hover:cursor-pointer bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition"
+				className="flex items-center gap-2 px-2 py-1 text-sm hover:cursor-pointer text-neutral-950 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition"
 			>
 				<RiMapPinRangeLine className="w-4 h-4" />
 				<span>{range} KM</span>

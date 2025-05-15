@@ -1,49 +1,44 @@
-import { useEffect, useState } from "react";
-import Map from "./Map";
+import { UserIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { BASE_URL } from "../utils/constants";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { calculateDistance, getTime } from "../utils/commonFunctions";
+import { BASE_URL } from "../utils/constants";
+import HelpConfirmationDialog from "./HelpConfirmationDialog";
+import Loader from "./Loader";
+import LocationModeToggle from "./LocationModeToggle";
+import Map from "./Map";
 import NeedTypeHeading from "./NeedTypeHeading";
 import StatusBadge from "./StatusBadge";
-import { UserIcon } from "@heroicons/react/24/outline";
-import Loader from "./Loader";
-import HelpConfirmationDialog from "./HelpConfirmationDialog";
-import { useSelector } from "react-redux";
-import LocationModeToggle from "./LocationModeToggle";
 
-import RangeDropdown from "./RangeDropdown";
 import MapLoader from "./MapLoader";
+import RangeDropdown from "./RangeDropdown";
 
 const DonorDashboard = () => {
 	const [requests, setRequests] = useState([]);
 	const user = useSelector((store) => store.user);
 	const [refreshRequests, setRefreshRequests] = useState(false);
 	const [locationMode, setLocationMode] = useState("my");
-	const [userPosition, setUserPosition] = useState([28.752271, 77.287743]);
+	const [userPosition, setUserPosition] = useState(null);
 	const [mapLoading, setMapLoading] = useState(false);
 	const [range, setRange] = useState(1);
 
-	// Get the current location object
-	const location = useLocation();
-	const queryParams = new URLSearchParams(location.search);
+	const coordinates = user?.location?.coordinates;
 
-	const lat = queryParams.get("lat");
-	const lng = queryParams.get("lng");
+	console.log(coordinates);
+	const centerPosition =
+		Array.isArray(coordinates) && coordinates.length >= 2
+			? [coordinates[1], coordinates[0]]
+			: [28.752271, 77.287743];
 
-	const latitude = parseFloat(lat);
-	const longitude = parseFloat(lng);
-
-	const centerPosition = [latitude, longitude];
-	console.log(user?.location?.coordinates, centerPosition);
-
-	if (isNaN(latitude) || isNaN(longitude)) {
-		throw new Error("Invalid latitude or longitude values");
-	}
+	console.log(centerPosition, userPosition);
+	const lat = coordinates?.length === 2 ? coordinates[1] : null;
+	const lng = coordinates?.length === 2 ? coordinates[0] : null;
 
 	const fetchRequests = async () => {
 		const requestsRange = range * 1000;
 		setMapLoading(true);
+		if (!lat || !lng) return;
 		try {
 			const res = await axios.get(
 				BASE_URL + `/request/all?lat=${lat}&lng=${lng}&range=${requestsRange}`,
@@ -60,9 +55,13 @@ const DonorDashboard = () => {
 			setMapLoading(true);
 		}
 	};
+
+	useEffect(() => {
+		setUserPosition(centerPosition);
+	}, [coordinates]);
 	useEffect(() => {
 		fetchRequests();
-	}, [refreshRequests, range]);
+	}, [refreshRequests, range, coordinates]);
 	return (
 		<div className="p-6 mt-16 w-full max-w-screen-xl mx-auto">
 			<div className="grid grid-cols-3 gap-2">
@@ -85,7 +84,7 @@ const DonorDashboard = () => {
 			</div>
 
 			<div className="grid grid-cols-3 gap-6">
-				<div className="bg-white rounded-xl shadow-lg p-4 col-span-1 overflow-y-auto max-h-[70vh]">
+				<div className="rounded-xl shadow-lg p-4 col-span-1 overflow-y-auto max-h-[70vh]">
 					<h2 className="text-xl font-bold mb-4">Nearby Needy Requests</h2>
 
 					<div className="space-y-4">
@@ -96,7 +95,7 @@ const DonorDashboard = () => {
 								<RequestCard
 									request={request}
 									key={request._id}
-									donorLocation={[longitude, latitude]}
+									donorLocation={[lng, lat]}
 									user={user}
 									setRefreshRequests={setRefreshRequests}
 								/>
@@ -111,6 +110,7 @@ const DonorDashboard = () => {
 						requests={requests}
 						userPosition={userPosition}
 						centerPosition={centerPosition}
+						range={range}
 					/>
 				</div>
 			</div>

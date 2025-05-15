@@ -13,6 +13,7 @@ const LocationModeToggle = ({
 	const [searchSuggestions, setSearchSueggestions] = useState([]);
 
 	const user = useSelector((store) => store.user);
+	const theme = useSelector((store) => store.theme);
 	const handleSearchQuery = (e) => {
 		setQuery(e.target.value);
 	};
@@ -94,32 +95,38 @@ const LocationModeToggle = ({
 						onChange={handleSearchQuery}
 						className="text-sm font-medium px-4 py-1 rounded-l-md w-60 focus:w-64 border-r-0 border border-purple-600 border-t-blue-500 focus:outline-none transition-all duration-300 "
 					/>
-					<ul className="absolute z-2000 top-full left-0 w-full bg-white border border-gray-300 rounded-md shadow-md mt-1">
-						{searchSuggestions.length > 0 &&
-							searchSuggestions.map((item, index) => (
-								<li
-									key={index}
-									className="text-sm px-2 py-1 flex gap-1 items-center hover:bg-gray-100 hover:cursor-pointer"
-									onClick={() =>
-										handleSuggestionAddressClick([item?.lat, item?.lon])
-									}
-								>
-									<HiOutlineLocationMarker className="w-4 h-4" />
-									{shortenString(item?.display_name, 28)}
-								</li>
-							))}
-					</ul>
+					{searchSuggestions.length > 0 && (
+						<ul className="absolute z-2000 top-full left-0 w-full bg-white border border-gray-300 rounded-md shadow-md mt-1">
+							{searchSuggestions.length > 0 &&
+								searchSuggestions.map((item, index) => (
+									<li
+										key={index}
+										className="text-sm px-2 py-1 flex gap-1 items-center text-neutral-950 hover:bg-gray-100 hover:cursor-pointer"
+										onClick={() =>
+											handleSuggestionAddressClick([item?.lat, item?.lon])
+										}
+									>
+										<HiOutlineLocationMarker className="w-4 h-4" />
+										{shortenString(item?.display_name, 28)}
+									</li>
+								))}
+						</ul>
+					)}
 				</div>
 			)}
 			<button
 				onClick={() => handleToggle("search")}
-				className={`px-4 py-1 ${
+				className={`px-4 py-1  ${
 					locationMode !== "search" && "hover:cursor-pointer rounded-l-md"
 				} rounded-r-md text-sm font-medium ${
 					locationMode === "search"
 						? "bg-gradient-to-r  from-blue-500 to-purple-600 text-white"
 						: "text-gray-700 hover:bg-gray-200"
-				} transition-all duration-300 `}
+				} transition-all duration-300 ${
+					theme === "dark" && locationMode !== "search"
+						? "text-white/60 hover:bg-gray-700"
+						: ""
+				} `}
 			>
 				Search Location
 			</button>
@@ -129,7 +136,11 @@ const LocationModeToggle = ({
 					locationMode === "my"
 						? "bg-gradient-to-r  from-blue-500 to-purple-600 text-white"
 						: "text-gray-700 hover:bg-gray-200"
-				} transition-all duration-300 `}
+				} transition-all duration-300 ${
+					theme === "dark" && locationMode !== "my"
+						? "text-white/60 hover:bg-gray-700"
+						: ""
+				}`}
 			>
 				My Location
 			</button>
