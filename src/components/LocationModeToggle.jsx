@@ -8,6 +8,9 @@ const LocationModeToggle = ({
 	locationMode,
 	setLocationMode,
 	setUserPosition,
+	setLat,
+	setLng,
+	setIsLoading,
 }) => {
 	const [query, setQuery] = useState("");
 	const [searchSuggestions, setSearchSueggestions] = useState([]);
@@ -18,31 +21,40 @@ const LocationModeToggle = ({
 		setQuery(e.target.value);
 	};
 
-	const handleToggle = (selectedMode) => {
+	const getCurrentPositionAsync = () =>
+		new Promise((resolve, reject) => {
+			navigator.geolocation.getCurrentPosition(resolve, reject);
+		});
+
+	const handleToggle = async (selectedMode) => {
 		setLocationMode(selectedMode);
+
 		if (selectedMode === "my") {
 			setQuery("");
+			setIsLoading(true);
 			if ("geolocation" in navigator) {
-				navigator.geolocation.getCurrentPosition(
-					(position) => {
-						const { latitude, longitude } = position.coords;
-						setUserPosition([latitude, longitude]);
-					},
-					(error) => {
-						console.error("Geolocation error:", error);
-						// fallback to saved user location
-						setUserPosition([
-							user?.location?.coordinates[1],
-							user?.location?.coordinates[0],
-						]);
-					}
-				);
+				try {
+					const position = await getCurrentPositionAsync();
+					const { latitude, longitude } = position.coords;
+					setUserPosition([latitude, longitude]);
+					setLat(latitude);
+					setLng(longitude);
+					setIsLoading(false);
+				} catch (error) {
+					console.error("Geolocation error:", error);
+					setUserPosition([
+						user?.location?.coordinates[1],
+						user?.location?.coordinates[0],
+					]);
+					setIsLoading(false);
+				}
 			} else {
 				console.error("Geolocation not supported");
 				setUserPosition([
 					user?.location?.coordinates[1],
 					user?.location?.coordinates[0],
 				]);
+				setIsLoading(false);
 			}
 		}
 	};
@@ -81,6 +93,8 @@ const LocationModeToggle = ({
 	}, [query]);
 
 	const handleSuggestionAddressClick = (position) => {
+		setLat(position[0]);
+		setLng(position[1]);
 		setUserPosition(position);
 		setSearchSueggestions([]);
 	};

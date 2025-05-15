@@ -33,7 +33,7 @@ const redIcon = new L.Icon({
 const fillPurpleOptions = {
 	fillColor: "#dab6fc", // Light purple fill
 	color: "#9f6ef0", // Light purple border
-	fillOpacity: 0.3, // Soft transparency
+	fillOpacity: 0.2, // Soft transparency
 	weight: 2, // Border thickness
 };
 
@@ -42,7 +42,7 @@ const Map = ({ requests, userPosition, centerPosition, range }) => {
 		<div className="w-full h-[80vh]">
 			<MapContainer
 				center={centerPosition}
-				zoom={15}
+				zoom={14}
 				scrollWheelZoom={false}
 				style={{ height: "70vh", width: "100%" }}
 				zoomControl={false}
@@ -90,7 +90,7 @@ const MapUpdater = ({ userPosition }) => {
 
 	useEffect(() => {
 		if (userPosition) {
-			map.setView(userPosition, 15);
+			map.setView(userPosition, 14);
 		}
 	}, [userPosition, map]);
 
