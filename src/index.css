@@ -25,3 +25,16 @@
 .step-custom-error::before {
   background-color: #fca5a5 !important; /* red-500 */
 }
+
+.leaflet-tooltip.leaflet-tooltip-top {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: black;
+  font-weight: bold;
+
+}
+
+.leaflet-popup-content {
+  padding: 0 !important;
+}

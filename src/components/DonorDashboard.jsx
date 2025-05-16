@@ -25,6 +25,7 @@ const DonorDashboard = () => {
 	const [range, setRange] = useState(2);
 	const [lat, setLat] = useState(null);
 	const [lng, setLng] = useState(null);
+	const [inputMarkerPosition, setInputMarkerPosition] = useState(null);
 
 	const coordinates = user?.location?.coordinates;
 
@@ -92,6 +93,7 @@ const DonorDashboard = () => {
 							setLat={setLat}
 							setLng={setLng}
 							setIsLoading={setIsLoading}
+							setInputMarkerPosition={setInputMarkerPosition}
 						/>
 					</div>
 				</div>
@@ -134,8 +136,13 @@ const DonorDashboard = () => {
 					<Map
 						requests={requests}
 						userPosition={userPosition}
+						setUserPosition={setUserPosition}
 						centerPosition={centerPosition}
 						range={range}
+						setLat={setLat}
+						setLng={setLng}
+						inputMarkerPosition={inputMarkerPosition}
+						setInputMarkerPosition={setInputMarkerPosition}
 					/>
 				</div>
 			</div>

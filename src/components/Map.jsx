@@ -1,5 +1,5 @@
 import L from "leaflet";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
 	Circle,
 	LayerGroup,
@@ -7,11 +7,15 @@ import {
 	Marker,
 	Popup,
 	TileLayer,
+	Tooltip,
 	useMap,
+	useMapEvent,
 	ZoomControl,
 } from "react-leaflet";
 
 import customMarker from "../assets/pin-map.png";
+import { AlertTriangle, CheckCircle, Clock, History } from "lucide-react";
+import { shortenString } from "../utils/commonFunctions";
 
 const customIcon = new L.Icon({
 	iconUrl: customMarker,
@@ -37,7 +41,18 @@ const fillPurpleOptions = {
 	weight: 2, // Border thickness
 };
 
-const Map = ({ requests, userPosition, centerPosition, range }) => {
+const Map = ({
+	requests,
+	userPosition,
+	centerPosition,
+	range,
+	setLat,
+	setLng,
+	setUserPosition,
+	inputMarkerPosition,
+	setInputMarkerPosition,
+}) => {
+	console.log(inputMarkerPosition, userPosition);
 	return (
 		<div className="w-full h-[80vh]">
 			<MapContainer
@@ -60,7 +75,14 @@ const Map = ({ requests, userPosition, centerPosition, range }) => {
 					/>
 				</LayerGroup>
 				<ZoomControl position="topright" />
-				<Marker position={userPosition} icon={redIcon}>
+				<InputMarker
+					setInputMarkerPosition={setInputMarkerPosition}
+					setLat={setLat}
+					setLng={setLng}
+					setUserPosition={setUserPosition}
+				/>
+
+				<Marker position={inputMarkerPosition || userPosition} icon={redIcon}>
 					<Popup>User Location</Popup>
 				</Marker>
 				{requests.map((request) => (
@@ -71,7 +93,73 @@ const Map = ({ requests, userPosition, centerPosition, range }) => {
 	);
 };
 
+const InputMarker = ({
+	setInputMarkerPosition,
+	setLat,
+	setLng,
+	setUserPosition,
+}) => {
+	useMapEvent({
+		click(e) {
+			const { lat, lng } = e.latlng;
+			setInputMarkerPosition(e.latlng);
+			setLat(lat);
+			setLng(lng);
+			setUserPosition([lat, lng]);
+		},
+	});
+	return null;
+};
+
 const LocationMarker = ({ request }) => {
+	console.log(request?.status);
+
+	const getTooltipIcon = (status) => {
+		const size = 20; // or whatever size you want
+
+		switch (status) {
+			case "pending":
+				return <Clock size={size} className="text-yellow-600" />;
+			case "in_progress":
+				return <History size={size} color="blue" />;
+			case "fulfilled":
+				return <CheckCircle size={size} color="green" />;
+			case "flagged":
+				return <AlertTriangle size={size} color="red" />;
+			default:
+				return null;
+		}
+	};
+
+	const capitalize = (text) => text.charAt(0).toUpperCase() + text.slice(1);
+
+	const getPopContent = (needType, status) => {
+		const type = capitalize(needType);
+		const baseStyle = "text-xs font-medium leading-snug";
+		const statusText = {
+			pending: {
+				color: "text-yellow-700",
+				message: `Assistance for ${needType} is pending.`,
+			},
+			in_progress: {
+				color: "text-blue-700",
+				message: `Support for ${needType} is currently in progress.`,
+			},
+			fulfilled: {
+				color: "text-green-700",
+				message: `${type} need has been fulfilled.`,
+			},
+			flagged: {
+				color: "text-red-700",
+				message: `${type} request has been reviewed and flagged.`,
+			},
+		};
+
+		const info = statusText[status];
+		if (!info) return null;
+
+		return <p className={`${baseStyle} ${info.color}`}>{info.message}</p>;
+	};
 	return (
 		<Marker
 			position={[
@@ -80,7 +168,10 @@ const LocationMarker = ({ request }) => {
 			]}
 			icon={customIcon}
 		>
-			<Popup>{request?.description}</Popup>
+			<Tooltip permanent direction="top" offset={[0, -20]}>
+				{getTooltipIcon(request?.status)}
+			</Tooltip>
+			<Popup>{getPopContent(request?.needType, request?.status)}</Popup>
 		</Marker>
 	);
 };

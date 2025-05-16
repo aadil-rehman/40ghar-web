@@ -11,12 +11,14 @@ const LocationModeToggle = ({
 	setLat,
 	setLng,
 	setIsLoading,
+	setInputMarkerPosition,
 }) => {
 	const [query, setQuery] = useState("");
 	const [searchSuggestions, setSearchSueggestions] = useState([]);
 
 	const user = useSelector((store) => store.user);
 	const theme = useSelector((store) => store.theme);
+
 	const handleSearchQuery = (e) => {
 		setQuery(e.target.value);
 	};
@@ -37,6 +39,7 @@ const LocationModeToggle = ({
 					const position = await getCurrentPositionAsync();
 					const { latitude, longitude } = position.coords;
 					setUserPosition([latitude, longitude]);
+					setInputMarkerPosition(null);
 					setLat(latitude);
 					setLng(longitude);
 					setIsLoading(false);
@@ -97,6 +100,7 @@ const LocationModeToggle = ({
 		setLng(position[1]);
 		setUserPosition(position);
 		setSearchSueggestions([]);
+		setInputMarkerPosition(null);
 	};
 	return (
 		<div className="flex justify-end mx-2 mb-1">
