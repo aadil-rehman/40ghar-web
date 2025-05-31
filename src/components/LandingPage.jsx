@@ -10,7 +10,7 @@ const LandingPage = () => {
 		<div className="min-h-screen flex items-center justify-center bg-base-100 px-6 ">
 			<div className="text-center max-w-2xl">
 				<h1 className="text-5xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent mb-4">
-					Welcome to 40 Ghar
+					Welcome to CareBridge
 				</h1>
 				<p className="text-lg text-gray-500 mb-10">
 					A compassionate platform where help meets those who need it the most.
@@ -70,9 +70,9 @@ const LandingPage = () => {
 					</div>
 				</div>
 
-				<p className="mt-10 text-xs text-gray-400">
+				{/* <p className="mt-10 text-xs text-gray-400">
 					An initiative inspired by the Teaching of Prophet Muhammad (PBUH)
-				</p>
+				</p> */}
 			</div>
 		</div>
 	);

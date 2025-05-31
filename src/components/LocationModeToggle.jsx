@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { shortenString } from "../utils/commonFunctions";
 import { useSelector } from "react-redux";
@@ -15,6 +15,7 @@ const LocationModeToggle = ({
 }) => {
 	const [query, setQuery] = useState("");
 	const [searchSuggestions, setSearchSueggestions] = useState([]);
+	const searchInputRef = useRef();
 
 	const user = useSelector((store) => store.user);
 	const theme = useSelector((store) => store.theme);
@@ -22,6 +23,12 @@ const LocationModeToggle = ({
 	const handleSearchQuery = (e) => {
 		setQuery(e.target.value);
 	};
+
+	useEffect(() => {
+		if (locationMode === "search") {
+			searchInputRef.current?.focus();
+		}
+	}, [locationMode]);
 
 	const getCurrentPositionAsync = () =>
 		new Promise((resolve, reject) => {
@@ -109,6 +116,7 @@ const LocationModeToggle = ({
 					<input
 						type="search"
 						placeholder="Search"
+						ref={searchInputRef}
 						value={query}
 						onChange={handleSearchQuery}
 						className="text-sm font-medium px-4 py-1 rounded-l-md w-60 focus:w-64 border-r-0 border border-purple-600 border-t-blue-500 focus:outline-none transition-all duration-300 "

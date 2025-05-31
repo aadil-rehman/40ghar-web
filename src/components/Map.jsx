@@ -15,7 +15,6 @@ import {
 
 import customMarker from "../assets/pin-map.png";
 import { AlertTriangle, CheckCircle, Clock, History } from "lucide-react";
-import { shortenString } from "../utils/commonFunctions";
 
 const customIcon = new L.Icon({
 	iconUrl: customMarker,
@@ -119,13 +118,13 @@ const LocationMarker = ({ request }) => {
 
 		switch (status) {
 			case "pending":
-				return <Clock size={size} className="text-yellow-600" />;
+				return <Clock size={size} color="red" />;
 			case "in_progress":
 				return <History size={size} color="blue" />;
 			case "fulfilled":
 				return <CheckCircle size={size} color="green" />;
 			case "flagged":
-				return <AlertTriangle size={size} color="red" />;
+				return <AlertTriangle size={size} className="text-yellow-600" />;
 			default:
 				return null;
 		}
@@ -135,22 +134,32 @@ const LocationMarker = ({ request }) => {
 
 	const getPopContent = (needType, status) => {
 		const type = capitalize(needType);
-		const baseStyle = "text-xs font-medium leading-snug";
+		const baseStyle = "text-xs font-semibold leading-snug";
+
 		const statusText = {
 			pending: {
-				color: "text-yellow-700",
-				message: `Assistance for ${needType} is pending.`,
+				color: "text-red-800",
+				bg: "bg-red-100",
+				border: "border-red-500",
+				statusLabel: "🚨 Pending",
+				message: `This ${type} request is waiting for support. Please, go check the request.`,
 			},
 			in_progress: {
-				color: "text-blue-700",
-				message: `Support for ${needType} is currently in progress.`,
+				color: "text-blue-800",
+				bg: "bg-blue-50",
+				statusLabel: "In Progress",
+				message: `Work is underway, someone committed to help.`,
 			},
 			fulfilled: {
 				color: "text-green-700",
-				message: `${type} need has been fulfilled.`,
+				bg: "bg-green-50",
+				statusLabel: "✅ Fulfilled",
+				message: `${type} request has been completed successfully.`,
 			},
 			flagged: {
-				color: "text-red-700",
+				color: "text-orange-700",
+				bg: "bg-orange-50",
+				statusLabel: "⚠️ Flagged",
 				message: `${type} request has been reviewed and flagged.`,
 			},
 		};
@@ -158,8 +167,19 @@ const LocationMarker = ({ request }) => {
 		const info = statusText[status];
 		if (!info) return null;
 
-		return <p className={`${baseStyle} ${info.color}`}>{info.message}</p>;
+		return (
+			<div
+				className={`p-2 rounded-md ${info.bg} border-l-4 ${info.color} border-current`}
+			>
+				<p className={`${baseStyle} mb-1`}>
+					<span className="font-bold">Needs {type}</span> |{" "}
+					<span>{info.statusLabel}</span>
+				</p>
+				<p className={`${baseStyle}`}>{info.message}</p>
+			</div>
+		);
 	};
+
 	return (
 		<Marker
 			position={[

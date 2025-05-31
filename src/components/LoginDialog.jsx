@@ -8,8 +8,8 @@ import { addUser } from "../utils/userSlice";
 const LoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 	const my_model_id = `model-${userRole}`;
 
-	const [emailId, setEmailId] = useState("");
-	const [password, setPassword] = useState("");
+	const [emailId, setEmailId] = useState("uzair@gmail.com");
+	const [password, setPassword] = useState("Uzair@123");
 	const [error, setError] = useState("");
 	const navigate = useNavigate();
 	// const { user } = useSelector((store) => store.user);
@@ -18,10 +18,11 @@ const LoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 	const handleLogin = async () => {
 		try {
 			const res = await axios.post(
-				BASE_URL + "/login",
+				BASE_URL + "/donor-login",
 				{
 					emailId,
 					password,
+					role: "donor",
 				},
 				{ withCredentials: true }
 			);
@@ -62,7 +63,7 @@ const LoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 							className="input w-full focus:outline-none rounded-lg"
 						/>
 						<input
-							type="text"
+							type="password"
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
 							placeholder="Password"

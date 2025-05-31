@@ -36,7 +36,7 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 				},
 			};
 			console.log(payload);
-			const res = await axios.post(BASE_URL + "/signup", payload, {
+			const res = await axios.post(BASE_URL + "/donor-signup", payload, {
 				withCredentials: true,
 			});
 
@@ -119,24 +119,29 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 							required
 							className="input w-full focus:outline-none rounded-lg"
 						/>
-						<input
-							type="email"
-							name="emailId"
-							placeholder="Email Address"
-							value={formData.emailId}
-							onChange={handleChange}
-							required
-							className="input w-full focus:outline-none rounded-lg"
-						/>
-						<input
-							type="password"
-							name="password"
-							placeholder="Password"
-							value={formData.password}
-							onChange={handleChange}
-							required
-							className="input input-bordered w-full focus:outline-none rounded-lg"
-						/>
+						{userRole === "donor" && (
+							<>
+								<input
+									type="email"
+									name="emailId"
+									placeholder="Email Address"
+									value={formData.emailId}
+									onChange={handleChange}
+									required
+									className="input w-full focus:outline-none rounded-lg"
+								/>
+								<input
+									type="password"
+									name="password"
+									placeholder="Password"
+									value={formData.password}
+									onChange={handleChange}
+									required
+									className="input input-bordered w-full focus:outline-none rounded-lg"
+								/>
+							</>
+						)}
+
 						<input
 							type="text"
 							name="phone"
