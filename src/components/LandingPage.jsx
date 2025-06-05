@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import SideDrawer from "./SideDrawer";
 import { darkBlue, darkPurple, lightBlue, lightPurple } from "../utils/colors";
 import LoginDialog from "./LoginDialog";
+import NeedyLoginDialog from "./NeedyLoginDialog";
 
 const LandingPage = () => {
 	const navigate = useNavigate();
@@ -48,7 +49,7 @@ const LandingPage = () => {
 							<h2 className="card-title text-purple-600">I'm in Need</h2>
 							<p>Raise a request for help and connect with nearby donors.</p>
 							<div className="card-actions mt-4">
-								<LoginDialog
+								<NeedyLoginDialog
 									label="Login as Needy"
 									userRole="needy"
 									darkColor={darkPurple}

@@ -4,6 +4,8 @@ import { getAddress } from "../utils/commonFunctions";
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import MiniLoader from "./MiniLoader";
+import OTPInput from "./OTPInput";
+import { useNavigate } from "react-router-dom";
 
 const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 	const drawerId = `drawer-${userRole}`;
@@ -11,21 +13,22 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 		name: "",
 		emailId: "",
 		password: "",
-		phone: "",
+		phone: "+91 7065830366",
 		address: "",
 	});
 
 	const [position, setPosition] = useState({});
 	const [addressLoading, setAddressLoading] = useState(false);
 	const [error, setError] = useState("");
+	const [isRegistered, setIsRegistered] = useState(false);
+	const [inputOtp, setInputOtp] = useState(null);
+	const navigate = useNavigate();
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
 	};
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-
+	const handleRegisterDonor = async () => {
 		try {
 			const payload = {
 				...formData,
@@ -85,6 +88,59 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 		}
 	};
 
+	const handleRegisterNeedy = async () => {
+		try {
+			const res = await axios.post(BASE_URL + "/otp/send-otp", {
+				phone: formData.phone,
+				role: userRole,
+			});
+		} catch (err) {
+			console.log(err);
+		}
+		setIsRegistered(true);
+	};
+
+	const handleOTPInput = (inputValue) => {
+		setInputOtp(inputValue);
+	};
+
+	const handleSignupClick = async () => {
+		try {
+			const payload = {
+				name: formData.name,
+				phone: formData.phone,
+				address: formData.address,
+				location: {
+					type: "Point",
+					coordinates: [position.longitude, position.latitude], // [longitude, latitude]
+				},
+				role: userRole,
+				otp: inputOtp,
+			};
+
+			const res = await axios.post(
+				BASE_URL + "/otp/verify-otp-signup",
+				payload,
+				{ withCredentials: true }
+			);
+
+			if (res?.data?.status === 1) {
+				setFormData({
+					name: "",
+					emailId: "",
+					password: "",
+					phone: "+91 7065830366",
+					address: "",
+				});
+				setPosition({});
+				navigate("/needy");
+			}
+		} catch (err) {
+			console.log(err);
+		}
+		setIsRegistered(false);
+	};
+
 	return (
 		<div className="drawer drawer-end inline-block">
 			<input id={drawerId} type="checkbox" className="drawer-toggle" />
@@ -109,7 +165,11 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 					>
 						Sign Up as {userRole === "donor" ? "Donor" : "Needy"}
 					</h2>
-					<form onSubmit={handleSubmit} className="space-y-4">
+					<div
+						// onSubmit={handleSubmit}
+						className="transition-opacity duration-500 space-y-4 
+						"
+					>
 						<input
 							type="text"
 							name="name"
@@ -117,7 +177,11 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 							value={formData.name}
 							onChange={handleChange}
 							required
-							className="input w-full focus:outline-none rounded-lg"
+							className={`input w-full focus:outline-none rounded-lg ${
+								!isRegistered
+									? "opacity-100"
+									: "opacity-40 hover:cursor-not-allowed"
+							}`}
 						/>
 						{userRole === "donor" && (
 							<>
@@ -128,7 +192,11 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 									value={formData.emailId}
 									onChange={handleChange}
 									required
-									className="input w-full focus:outline-none rounded-lg"
+									className={`input w-full focus:outline-none rounded-lg ${
+										!isRegistered
+											? "opacity-100"
+											: "opacity-40 hover:cursor-not-allowed"
+									}`}
 								/>
 								<input
 									type="password"
@@ -137,7 +205,11 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 									value={formData.password}
 									onChange={handleChange}
 									required
-									className="input input-bordered w-full focus:outline-none rounded-lg"
+									className={`input input-bordered w-full focus:outline-none rounded-lg ${
+										!isRegistered
+											? "opacity-100"
+											: "opacity-40 hover:cursor-not-allowed"
+									}`}
 								/>
 							</>
 						)}
@@ -149,12 +221,20 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 							value={formData.phone}
 							onChange={handleChange}
 							required
-							className="input input-bordered w-full focus:outline-none rounded-lg"
+							className={`input input-bordered w-full focus:outline-none rounded-lg ${
+								!isRegistered
+									? "opacity-100"
+									: "opacity-40 hover:cursor-not-allowed"
+							}`}
 						/>
 						<div className="flex gap-1">
 							<span
 								style={{ backgroundColor: darkColor }}
-								className={`flex gap-1 items-center text-white w-fit px-2 py-1.5 rounded-lg hover:cursor-pointer`}
+								className={`flex gap-1 items-center text-white w-fit px-2 py-1.5 rounded-lg  ${
+									!isRegistered
+										? "opacity-100 hover:cursor-pointer"
+										: "opacity-40 hover:cursor-not-allowed"
+								}`}
 								onClick={handleGetPositionClick}
 							>
 								{addressLoading ? (
@@ -176,19 +256,37 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 								onChange={handleChange}
 								required
 								readOnly
-								className="input input-bordered w-full hover:cursor-not-allowed focus:outline-none rounded-lg"
+								className={`input input-bordered w-full hover:cursor-not-allowed focus:outline-none rounded-lg ${
+									!isRegistered ? "opacity-100" : "opacity-40"
+								}`}
 							/>
 						</div>
 
 						<button
 							type="submit"
 							style={{ backgroundColor: lightColor, color: darkColor }}
-							className={`btn w-full rounded-lg`}
+							className={`btn w-full rounded-lg ${
+								isRegistered ? "opacity-80" : ""
+							}`}
+							onClick={
+								userRole === "donor" ? handleRegisterDonor : handleRegisterNeedy
+							}
+							disabled={isRegistered}
 						>
 							Register
 						</button>
-					</form>
+					</div>
 					{error && <p className="text-red-600 text-sm">{error}</p>}
+					{isRegistered && (
+						<OTPInput
+							length={6}
+							phone={formData.phone}
+							lightColor={lightColor}
+							darkColor={darkColor}
+							onChange={handleOTPInput}
+							handleSubmit={handleSignupClick}
+						/>
+					)}
 				</div>
 			</div>
 		</div>
