@@ -96,7 +96,7 @@ const DonorDashboard = () => {
 							setInputMarkerPosition={setInputMarkerPosition}
 						/>
 					</div>
-					<div className="overflow-hidden whitespace-nowrap border border-yellow-300 bg-yellow-50 py-1 px-3 rounded-md mb-2">
+					<div className="overflow-hidden whitespace-nowrap border border-yellow-300 bg-yellow-50 ml-1 py-1 px-3 rounded-md mb-2">
 						<p className="inline-block animate-marquee text-sm font-medium text-yellow-800">
 							The displayed location markers are approximate with a small offset
 							(about 20–50 meters) from their actual positions to safeguard the

@@ -27,8 +27,9 @@ const NeedyLoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 			const res = await axios.post(
 				BASE_URL + "/otp/send-otp",
 				{
-					phone,
+					phone: "+91" + phone,
 					role: "needy",
+					loginSendOtp: true,
 				},
 				{ withCredentials: true }
 			);
@@ -48,7 +49,7 @@ const NeedyLoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 			const res = await axios.post(
 				BASE_URL + "/otp/verify-otp-login",
 				{
-					phone,
+					phone: "+91" + phone,
 					otp: inputOtp,
 				},
 				{ withCredentials: true }
@@ -62,7 +63,7 @@ const NeedyLoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 			setError("");
 		} catch (err) {
 			console.error("ERROR: " + err);
-			setError(err?.response?.data?.error);
+			setError(err?.response?.data?.message);
 		}
 	};
 
@@ -70,7 +71,6 @@ const NeedyLoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 		setInputOtp(inputValue);
 	};
 
-	console.log(error);
 	return (
 		<div>
 			<button
@@ -94,13 +94,22 @@ const NeedyLoginDialog = ({ label, darkColor, lightColor, userRole }) => {
 								>
 									{label}
 								</h2>
-								<input
-									type="text"
-									value={phone}
-									onChange={(e) => setPhone(e.target.value)}
-									placeholder="Phone"
-									className="input w-full focus:outline-none rounded-lg"
-								/>
+								<div className="relative">
+									<p className="absolute left-0 flex items-center pl-1 pr-1.5 inset-y-0 z-10 border-r-2 border-r-gray-300 text-gray-500">
+										+91
+									</p>
+									<input
+										type="text"
+										value={phone}
+										onChange={(e) => {
+											const cleaned = e.target.value.replace(/\D/g, "");
+											setPhone(cleaned);
+											setError("");
+										}}
+										placeholder="Enter 10-digit number"
+										className="input w-full focus:outline-none pl-10 rounded-lg"
+									/>
+								</div>
 								<div className="card-actions justify-center">
 									<button
 										style={{ color: darkColor, backgroundColor: lightColor }}

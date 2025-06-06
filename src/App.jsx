@@ -7,6 +7,7 @@ import LandingPage from "./components/LandingPage";
 import MyRequests from "./components/MyRequests";
 import { Provider } from "react-redux";
 import { store } from "./utils/store";
+import ProtectedRoutes from "./components/ProtectedRoutes";
 
 function App() {
 	return (
@@ -15,9 +16,30 @@ function App() {
 				<Routes>
 					<Route path="/" element={<AppLayout />}>
 						<Route path="/" element={<LandingPage />} />
-						<Route path="/needy" element={<NeedyDashboard />} />
-						<Route path="/donor/requests" element={<DonorDashboard />} />
-						<Route path="/myRequests" element={<MyRequests />} />
+						<Route
+							path="/needy"
+							element={
+								<ProtectedRoutes allowedRoles={["needy"]}>
+									<NeedyDashboard />
+								</ProtectedRoutes>
+							}
+						/>
+						<Route
+							path="/donor/requests"
+							element={
+								<ProtectedRoutes allowedRoles={["donor"]}>
+									<DonorDashboard />
+								</ProtectedRoutes>
+							}
+						/>
+						<Route
+							path="/myRequests"
+							element={
+								<ProtectedRoutes allowedRoles={["needy"]}>
+									<MyRequests />
+								</ProtectedRoutes>
+							}
+						/>
 					</Route>
 				</Routes>
 			</BrowserRouter>

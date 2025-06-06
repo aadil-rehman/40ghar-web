@@ -13,7 +13,7 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 		name: "",
 		emailId: "",
 		password: "",
-		phone: "+91 7065830366",
+		phone: "7065830366",
 		address: "",
 	});
 
@@ -26,9 +26,10 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 
 	const handleChange = (e) => {
 		setFormData({ ...formData, [e.target.name]: e.target.value });
+		setError("");
 	};
 
-	const handleRegisterDonor = async () => {
+	const handleDonorSignup = async () => {
 		try {
 			const payload = {
 				...formData,
@@ -57,7 +58,7 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 			setError("");
 		} catch (err) {
 			console.error("error", err);
-			setError(err?.response?.data?.error);
+			setError(err?.response?.data?.message);
 		}
 	};
 
@@ -89,22 +90,37 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 	};
 
 	const handleRegisterNeedy = async () => {
+		if (!formData.name) {
+			setError("Name is required");
+			return;
+		} else if (!formData.phone) {
+			setError("Phone is required");
+			return;
+		} else if (!formData.address) {
+			setError("Address and location are required");
+			return;
+		}
 		try {
 			const res = await axios.post(BASE_URL + "/otp/send-otp", {
-				phone: formData.phone,
+				phone: "+91" + formData.phone,
 				role: userRole,
+				loginSendOtp: false,
 			});
+
+			if (res?.data?.status === 1) {
+				setIsRegistered(true);
+			}
 		} catch (err) {
 			console.log(err);
+			setError(err?.response?.data?.message);
 		}
-		setIsRegistered(true);
 	};
 
 	const handleOTPInput = (inputValue) => {
 		setInputOtp(inputValue);
 	};
 
-	const handleSignupClick = async () => {
+	const handleNeedySignup = async () => {
 		try {
 			const payload = {
 				name: formData.name,
@@ -137,6 +153,7 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 			}
 		} catch (err) {
 			console.log(err);
+			setError(err?.response?.data?.message);
 		}
 		setIsRegistered(false);
 	};
@@ -269,14 +286,13 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 								isRegistered ? "opacity-80" : ""
 							}`}
 							onClick={
-								userRole === "donor" ? handleRegisterDonor : handleRegisterNeedy
+								userRole === "donor" ? handleDonorSignup : handleRegisterNeedy
 							}
 							disabled={isRegistered}
 						>
 							Register
 						</button>
 					</div>
-					{error && <p className="text-red-600 text-sm">{error}</p>}
 					{isRegistered && (
 						<OTPInput
 							length={6}
@@ -284,9 +300,10 @@ const SideDrawer = ({ label, userRole, darkColor, lightColor }) => {
 							lightColor={lightColor}
 							darkColor={darkColor}
 							onChange={handleOTPInput}
-							handleSubmit={handleSignupClick}
+							handleSubmit={handleNeedySignup}
 						/>
 					)}
+					{error && <p className="text-red-600 text-sm">{error}</p>}
 				</div>
 			</div>
 		</div>

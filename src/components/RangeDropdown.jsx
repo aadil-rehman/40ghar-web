@@ -21,7 +21,7 @@ const RangeDropdown = ({ range, setRange }) => {
 
 	return (
 		<div
-			className="relative inline-block text-left z-2000 mx-2"
+			className="relative inline-block text-left z-2000 mx-1"
 			ref={dropdownRef}
 		>
 			<button
